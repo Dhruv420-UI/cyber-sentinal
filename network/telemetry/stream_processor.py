@@ -103,6 +103,7 @@ class StreamProcessor:
         self._max_out = max_output_queue
         self._min_flows = min_flows_per_window
         self._closed = False
+        self._source_done = False
         self._output: asyncio.Queue[TelemetryWindowEvent] = asyncio.Queue(maxsize=max_output_queue)
         self._stats = {
             "total_flows_received": 0,
@@ -189,6 +190,7 @@ class StreamProcessor:
                 w_end = w_start + self._window_seconds
                 window_flows = list(buffer)
                 await self._emit_window(window_flows, w_start, w_end, partial=True)
+            self._source_done = True
             logger.info("[StreamProcessor] Stopped. Stats: %s", self._stats)
 
     async def _emit_window(
@@ -259,6 +261,8 @@ class StreamProcessor:
                 event = await asyncio.wait_for(self._output.get(), timeout=1.0)
                 yield event
             except asyncio.TimeoutError:
+                if self._source_done and self._output.empty():
+                    break
                 continue
             except asyncio.CancelledError:
                 break

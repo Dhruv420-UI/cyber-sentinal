@@ -125,7 +125,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
             return;
           }
 
-          if (data.status === 'FORECAST' || data.current_stage) {
+          if (data.status === 'FORECAST' || data.type === 'forecast' || data.current_stage) {
             const castedForecast: CyberSentinelForecast = data as unknown as CyberSentinelForecast;
             
             // Record observed stage

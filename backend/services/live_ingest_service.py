@@ -165,6 +165,8 @@ class LiveIngestService:
                 dead.append(q)
         for q in dead:
             self._subscribers.discard(q)
+        # Yield to event loop so sender tasks can immediately dispatch the event
+        await asyncio.sleep(0)
 
     async def start_session(
         self,
@@ -202,7 +204,16 @@ class LiveIngestService:
                 async for window in processor.windows():
                     if self._closed:
                         break
-                    await self._process_window(window, session_id, model_svc, k_steps=k_steps)
+                    await self._process_window(
+                        window,
+                        session_id,
+                        model_svc,
+                        k_steps=k_steps,
+                        immediate_inference=True,
+                    )
+                    await asyncio.sleep(0.05)
+            except Exception as exc:
+                logger.error("[LiveIngest] Session %s error: %s", session_id, exc, exc_info=True)
             finally:
                 await processor.stop()
                 run_task.cancel()
@@ -210,6 +221,9 @@ class LiveIngestService:
                     await run_task
                 except asyncio.CancelledError:
                     pass
+                self._active_tasks.pop(session_id, None)
+                self._seq_buffers.pop(session_id, None)
+                self._observed_stages.pop(session_id, None)
                 logger.info("[LiveIngest] Session %s ended. Proc stats: %s",
                             session_id, processor.stats)
 
@@ -483,10 +497,15 @@ class LiveIngestService:
 
         # ---- 7. Run ML inference via ModelService (real, not cached) -------
         try:
-            fc = model_svc.forecast(
-                x_seq=[row.tolist() for row in seq_list],
-                mask_list=None,
-                k_steps=k_steps,
+            loop = asyncio.get_running_loop()
+            seq_py = [row.tolist() for row in seq_list]
+            fc = await loop.run_in_executor(
+                None,
+                lambda: model_svc.forecast(
+                    x_seq=seq_py,
+                    mask_list=None,
+                    k_steps=k_steps,
+                )
             )
         except Exception as exc:
             logger.error("[LiveIngest] ModelService.forecast() error: %s", exc, exc_info=True)
@@ -575,6 +594,7 @@ def _build_live_event(
 
     return {
         "status": "FORECAST",
+        "type": "forecast",
         "mode": mode,
         "event_id": str(uuid.uuid4()),
         "window_id": window.window_id,
