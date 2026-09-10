@@ -33,8 +33,12 @@ from typing import Any, Dict, Optional
 from fastapi import APIRouter, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel, Field
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
+
+# Project root: backend/api/stream_endpoints.py → backend/api → backend → project root
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 stream_router = APIRouter(prefix="/stream", tags=["streaming"])
 
@@ -82,8 +86,15 @@ async def start_session(body: StartSessionRequest, request: Request):
         if body.source_kind == "replay":
             if not body.source_path:
                 raise HTTPException(status_code=422, detail="source_path required for replay source")
+            # Resolve relative paths against project root (not CWD).
+            # The frontend sends paths like 'datasets/sample/trace_recon_01.csv'
+            # which must resolve to <project-root>/datasets/sample/... regardless
+            # of whether CWD is the project root or the backend/ subdirectory.
+            resolved_path = Path(body.source_path)
+            if not resolved_path.is_absolute():
+                resolved_path = _PROJECT_ROOT / resolved_path
             kwargs = {
-                "path": body.source_path,
+                "path": str(resolved_path),
                 "realtime_factor": body.realtime_factor,
                 "scenario_id": body.session_id or "live_replay",
             }
