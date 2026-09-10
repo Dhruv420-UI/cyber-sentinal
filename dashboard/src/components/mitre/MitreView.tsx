@@ -57,13 +57,13 @@ export const MitreView: React.FC = () => {
   return (
     <div className="space-y-5">
       {/* --- Header --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 shadow-lg shadow-black/30">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 shadow-lg shadow-black/30">
         <div className="text-[10px] font-mono uppercase text-blue-400 font-bold mb-1">
           KNOWLEDGE ENGINE // MITRE ATT&CK ENTERPRISE V14
         </div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-100 flex flex-wrap items-center gap-2">
               Deterministic MITRE Mapping
               <span className="px-2 py-0.5 text-[10px] font-mono rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/30">
                 STATIC LOOKUP MATRIX
@@ -73,7 +73,7 @@ export const MitreView: React.FC = () => {
               Deterministic rule-based mapping correlating predicted attack stages and physical network anomalies with verified ATT&CK techniques.
             </p>
           </div>
-          <div className="text-right text-xs font-mono text-slate-400">
+          <div className="text-left md:text-right text-xs font-mono text-slate-400">
             <div>Current Active Stage: <span className="text-blue-400 font-bold">{activeStage}</span></div>
             <div>Knowledge Base: <span className="text-slate-200">Enterprise v14 (Zero LLM Hallucination)</span></div>
           </div>
@@ -81,7 +81,7 @@ export const MitreView: React.FC = () => {
       </div>
 
       {/* --- Active Forecast Context Card --- */}
-      <div className="bg-gradient-to-r from-[#0d1628] to-[#0a101f] border border-blue-500/30 rounded-xl p-5">
+      <div className="bg-gradient-to-r from-[#0d1628] to-[#0a101f] border border-blue-500/30 rounded-xl p-4 sm:p-5">
         <div className="text-xs font-bold text-slate-200 mb-3 flex items-center gap-2 font-mono">
           <ShieldCheck className="w-4 h-4 text-blue-400" />
           Techniques Contextually Associated with Predicted Next Stage: <span className="text-blue-400">{activeStage}</span>
@@ -113,19 +113,19 @@ export const MitreView: React.FC = () => {
       </div>
 
       {/* --- Stage to Technique Reference Matrix --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
           <div className="text-xs font-bold text-slate-200 font-mono">
             Full Enterprise v14 Tactical Stage Mapping Matrix
           </div>
-          <div className="relative w-64">
+          <div className="relative w-full sm:w-64">
             <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Filter techniques or stages..."
-              className="w-full bg-[#0d1424] border border-slate-700 text-slate-200 text-xs rounded-lg pl-8 pr-3 py-1 font-mono outline-none"
+              className="w-full bg-[#0d1424] border border-slate-700 text-slate-200 text-xs rounded-lg pl-8 pr-3 py-1.5 font-mono outline-none"
             />
           </div>
         </div>
@@ -154,4 +154,4 @@ export const MitreView: React.FC = () => {
       </div>
     </div>
   );
-};
+};

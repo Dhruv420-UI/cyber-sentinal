@@ -204,11 +204,11 @@ export default function ForecastView() {
   });
 
   return (
-    <div className="flex flex-col gap-6 p-6 h-full overflow-y-auto">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 h-full overflow-y-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h1 className="text-xl font-semibold text-gray-100">Forecast and Trajectory</h1>
-          <p className="text-sm text-gray-400 mt-0.5">Autoregressive K-step attack trajectory prediction</p>
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-100">Forecast and Trajectory</h1>
+          <p className="text-xs sm:text-sm text-gray-400 mt-0.5">Autoregressive K-step attack trajectory prediction</p>
         </div>
         {lastEvent && (
           <div className="text-xs text-gray-500 font-mono">
@@ -217,7 +217,7 @@ export default function ForecastView() {
         )}
       </div>
 
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
         <MetricCard
           icon={<Activity className="w-3.5 h-3.5" />}
           label="Current Stage"
@@ -271,7 +271,9 @@ export default function ForecastView() {
       </div>
 
       <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-        <h2 className="text-sm font-semibold text-gray-200 mb-3">Feature Deltas</h2></div>
+        <h2 className="text-sm font-semibold text-gray-200 mb-3">Feature Deltas</h2>
+        <FeatureDeltaTable forecast={lastForecast} />
+      </div>
     </div>
   );
 }

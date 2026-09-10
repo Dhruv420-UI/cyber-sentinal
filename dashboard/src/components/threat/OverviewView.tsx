@@ -41,18 +41,18 @@ export const OverviewView: React.FC = () => {
   return (
     <div className="space-y-5">
       {/* --- 1. Header & Active Threat Headline --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-gradient-to-r from-[#0d1424] to-[#090e18] p-5 rounded-xl border border-[#1b2538] shadow-lg shadow-black/40">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-gradient-to-r from-[#0d1424] to-[#090e18] p-4 sm:p-5 rounded-xl border border-[#1b2538] shadow-lg shadow-black/40">
         <div>
           <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 flex items-center gap-2 mb-1">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
             SOC COMMAND CENTER // REAL-TIME EVALUATION
           </div>
-          <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2.5 tracking-tight">
+          <h1 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2.5 tracking-tight">
             {curStage === 'BENIGN' && atkProb < 0.3 ? (
               <span className="text-emerald-400">Baseline Network Activity Nominal</span>
             ) : (
               <span className="text-red-400 flex items-center gap-2">
-                <AlertOctagon className="w-6 h-6 text-red-500 animate-bounce" />
+                <AlertOctagon className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 animate-bounce shrink-0" />
                 Active Attack Progression Detected
               </span>
             )}
@@ -62,7 +62,7 @@ export const OverviewView: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-4 text-xs font-mono text-slate-400">
-          <div className="text-right">
+          <div className="text-left md:text-right">
             <div className="text-[10px] uppercase text-slate-500">Inference Window</div>
             <div className="text-slate-200 font-bold">W-30s [AUTOREGRESSIVE]</div>
           </div>
@@ -70,7 +70,7 @@ export const OverviewView: React.FC = () => {
       </div>
 
       {/* --- 2. Top Metric Cards (Matches Screenshot 1) --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Current Stage */}
         <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between text-xs font-mono text-slate-400">
@@ -169,7 +169,7 @@ export const OverviewView: React.FC = () => {
       </div>
 
       {/* --- 3. Attack Trajectory (Matches Screenshot 1 & 2 Centerpiece) --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 shadow-lg shadow-black/20">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 shadow-lg shadow-black/20">
         <div className="flex items-center justify-between mb-4">
           <div>
             <div className="text-xs font-bold text-slate-200 tracking-wide flex items-center gap-2">
@@ -223,7 +223,7 @@ export const OverviewView: React.FC = () => {
       </div>
 
       {/* --- 4. Secondary Row: Telemetry Overview & Feature Attribution & MITRE --- */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
         {/* Telemetry Overview (Matches Screenshot 1) */}
         <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3">

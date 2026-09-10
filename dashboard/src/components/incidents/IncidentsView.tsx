@@ -11,13 +11,13 @@ export const IncidentsView: React.FC = () => {
   return (
     <div className="space-y-5">
       {/* --- Header --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 shadow-lg shadow-black/30">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 shadow-lg shadow-black/30">
         <div className="text-[10px] font-mono uppercase text-red-400 font-bold mb-1">
           INTELLIGENCE / INCIDENTS TRIAGE
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-100 flex flex-wrap items-center gap-2">
               Detected Incident Queue
               <span className="px-2 py-0.5 text-[10px] font-mono rounded-full bg-red-500/15 text-red-400 border border-red-500/30">
                 {incidents.length} Active Events
@@ -132,16 +132,16 @@ export const IncidentsView: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 pt-2">
                 <button
                   onClick={() => setActiveNav('forecast')}
-                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-colors flex items-center gap-2"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 min-h-[38px]"
                 >
                   View Full Forecast & Trajectory <ChevronRight className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => setActiveNav('analyst')}
-                  className="px-4 py-2 rounded-lg bg-[#141b2c] hover:bg-[#1a243c] text-slate-200 border border-slate-700 text-xs font-bold transition-colors"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-[#141b2c] hover:bg-[#1a243c] text-slate-200 border border-slate-700 text-xs font-bold transition-colors flex items-center justify-center min-h-[38px]"
                 >
                   Ask Analyst About This Incident
                 </button>

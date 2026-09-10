@@ -43,13 +43,13 @@ export const SimulatorView: React.FC = () => {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 shadow-lg shadow-black/30">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 shadow-lg shadow-black/30">
         <div className="text-[10px] font-mono uppercase text-purple-400 font-bold mb-1">
           OPERATIONAL TOOL // SYNTHETIC DEFENSIVE TELEMETRY GENERATOR
         </div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-100 flex flex-wrap items-center gap-2">
               Mobile & Network Traffic Simulator
               <span className="px-2 py-0.5 text-[10px] font-mono rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30">
                 PROVENANCE: GENERATED
@@ -63,7 +63,7 @@ export const SimulatorView: React.FC = () => {
       </div>
 
       {/* Profile Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
         {PROFILES.map((p) => (
           <div
             key={p.id}
@@ -86,8 +86,8 @@ export const SimulatorView: React.FC = () => {
       </div>
 
       {/* Ingestion Controls */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <span className="text-xs font-mono text-slate-400">Flow Burst Count:</span>
           <input
             type="range"
@@ -95,7 +95,7 @@ export const SimulatorView: React.FC = () => {
             max="50"
             value={flowCount}
             onChange={(e) => setFlowCount(Number(e.target.value))}
-            className="w-48 accent-purple-500"
+            className="w-32 sm:w-48 accent-purple-500"
             disabled // disabled because backend replay does not use this value
           />
           <span className="text-xs font-mono font-bold text-purple-400">{flowCount} flows</span>
@@ -103,7 +103,7 @@ export const SimulatorView: React.FC = () => {
         <button
           onClick={handleTransmit}
           disabled={isTransmitting}
-          className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-purple-600/20 flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-purple-600/20 flex items-center justify-center gap-2 disabled:opacity-50 transition-all min-h-[40px]"
         >
           <Send className="w-3.5 h-3.5" />
           {isTransmitting ? 'Transmitting to Neural Model...' : 'Transmit Telemetry Batch'}
@@ -112,7 +112,7 @@ export const SimulatorView: React.FC = () => {
 
       {/* KPI Feedback */}
       {lastForecast && (
-        <div className="bg-[#0b101c] border border-emerald-500/30 rounded-xl p-5 space-y-3">
+        <div className="bg-[#0b101c] border border-emerald-500/30 rounded-xl p-4 sm:p-5 space-y-3">
           <div className="text-xs font-mono font-bold text-emerald-400 flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4" /> Live Inference Feedback Received from CyberWorldModelV2
           </div>

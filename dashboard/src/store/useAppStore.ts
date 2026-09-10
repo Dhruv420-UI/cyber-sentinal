@@ -31,6 +31,13 @@ interface AppStore {
   activeNav: ActiveNav;
   setActiveNav: (nav: ActiveNav) => void;
 
+  // Mobile Drawer State
+  isMobileNavOpen: boolean;
+  setIsMobileNavOpen: (open: boolean) => void;
+  toggleMobileNav: () => void;
+  isMobileAnalystOpen: boolean;
+  setIsMobileAnalystOpen: (open: boolean) => void;
+
   // Real-time stream state
   isWsConnected: boolean;
   wsError: string | null;
@@ -63,7 +70,13 @@ let reconnectTimer: any = null;
 
 export const useAppStore = create<AppStore>((set, get) => ({
   activeNav: 'overview',
-  setActiveNav: (nav) => set({ activeNav: nav }),
+  setActiveNav: (nav) => set({ activeNav: nav, isMobileNavOpen: false, isMobileAnalystOpen: false }),
+
+  isMobileNavOpen: false,
+  setIsMobileNavOpen: (open) => set({ isMobileNavOpen: open }),
+  toggleMobileNav: () => set((state) => ({ isMobileNavOpen: !state.isMobileNavOpen })),
+  isMobileAnalystOpen: false,
+  setIsMobileAnalystOpen: (open) => set({ isMobileAnalystOpen: open }),
 
   isWsConnected: false,
   wsError: null,

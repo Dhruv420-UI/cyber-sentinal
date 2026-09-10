@@ -10,13 +10,13 @@ export const TelemetryView: React.FC = () => {
   return (
     <div className="space-y-5">
       {/* --- Header (Screenshot 5 Reference) --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 shadow-lg shadow-black/30">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 shadow-lg shadow-black/30">
         <div className="text-[10px] font-mono uppercase text-emerald-400 font-bold mb-1">
           PHYSICAL SENSOR LAYER // NETWORK STATE BUILDER
         </div>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-100 flex flex-wrap items-center gap-2">
               Live Network Flow Telemetry (30s Windows)
               <span className={`px-2 py-0.5 text-[10px] font-mono rounded-full border ${
                 isWsConnected ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
@@ -28,7 +28,7 @@ export const TelemetryView: React.FC = () => {
               Aggregating raw network flows into 24-dimensional normalized physical state vectors S_t.
             </p>
           </div>
-          <div className="text-right text-xs font-mono text-slate-400">
+          <div className="text-left md:text-right text-xs font-mono text-slate-400">
             <div>Window Duration: <span className="text-slate-200 font-bold">30.0s</span></div>
             <div>Dimension: <span className="text-blue-400 font-bold">24 Curated Features</span></div>
           </div>
@@ -83,7 +83,7 @@ export const TelemetryView: React.FC = () => {
       </div>
 
       {/* --- 24-D State Vector Inspection Table --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
             <div className="text-xs font-bold text-slate-200">The 24-D State Vector Dimensions (S_t)</div>
@@ -109,7 +109,7 @@ export const TelemetryView: React.FC = () => {
       </div>
 
       {/* --- Live Ingestion Event History Table (Screenshot 5 Bottom) --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5">
         <div className="text-xs font-bold text-slate-200 mb-3 font-mono">Recent Stream Ingestion Events</div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
@@ -146,4 +146,4 @@ export const TelemetryView: React.FC = () => {
       </div>
     </div>
   );
-};
+};

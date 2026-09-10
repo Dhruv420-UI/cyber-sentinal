@@ -14,13 +14,13 @@ export const HealthView: React.FC = () => {
   return (
     <div className="space-y-5">
       {/* --- Header --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 shadow-lg shadow-black/30">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 shadow-lg shadow-black/30">
         <div className="text-[10px] font-mono uppercase text-emerald-400 font-bold mb-1">
           SYSTEM HEALTH & PRODUCTION OBSERVABILITY
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-100 flex flex-wrap items-center gap-2">
               Production Runtime Health & Metrics
               <span className={`px-2 py-0.5 text-[10px] font-mono rounded-full ${
                 systemHealth?.status === 'healthy' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
@@ -36,7 +36,7 @@ export const HealthView: React.FC = () => {
       </div>
 
       {/* --- Subsystem Status Grid --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {/* CyberWorldModelV2 Checkpoint */}
         <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 space-y-2">
           <div className="flex items-center justify-between text-xs font-mono">
@@ -119,4 +119,4 @@ export const HealthView: React.FC = () => {
       </div>
     </div>
   );
-};
+};

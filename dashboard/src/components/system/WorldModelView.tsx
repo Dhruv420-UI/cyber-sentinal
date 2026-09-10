@@ -5,12 +5,12 @@ export const WorldModelView: React.FC = () => {
   return (
     <div className="space-y-5">
       {/* --- Header --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 shadow-lg shadow-black/30">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 shadow-lg shadow-black/30">
         <div className="text-[10px] font-mono uppercase text-blue-400 font-bold mb-1">
           NEURAL ARCHITECTURE // CYBERWORLDMODELV2
         </div>
         <div>
-          <h1 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+          <h1 className="text-lg sm:text-xl font-bold text-slate-100 flex flex-wrap items-center gap-2">
             Temporal Cyber World Model Architecture
             <span className="px-2 py-0.5 text-[10px] font-mono rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30">
               PHYSICAL STATE DYNAMICS
@@ -23,7 +23,7 @@ export const WorldModelView: React.FC = () => {
       </div>
 
       {/* --- Neural Pipeline Flow --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 space-y-4">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 space-y-4">
         <div className="text-xs font-bold text-slate-200 font-mono">End-to-End Deep Learning Pipeline</div>
         <div className="flex flex-col items-center gap-2 text-xs font-mono max-w-xl mx-auto">
           <div className="w-full bg-[#0d1424] border border-[#1e2a42] p-3 rounded-lg text-center font-bold text-slate-200">
@@ -57,7 +57,7 @@ export const WorldModelView: React.FC = () => {
       </div>
 
       {/* --- Empirical Benchmark Comparison Table --- */}
-      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-5 space-y-3">
+      <div className="bg-[#0b101c] border border-[#1a2333] rounded-xl p-4 sm:p-5 space-y-3">
         <div className="flex items-center justify-between">
           <div className="text-xs font-bold text-slate-200 font-mono">
             Empirical Benchmark Validation (Hard Multi-Stage Holdout N=44)
@@ -115,4 +115,4 @@ export const WorldModelView: React.FC = () => {
       </div>
     </div>
   );
-};
+};
