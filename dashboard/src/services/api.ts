@@ -17,16 +17,16 @@ export function getWsStreamUrl(): string {
   if (envWs && typeof envWs === 'string' && envWs.trim()) {
     return envWs.trim().replace(/\/+$/, '');
   }
-  const apiBase = getApiBaseUrl();
-  if (apiBase.startsWith('http://') || apiBase.startsWith('https://')) {
-    const wsBase = apiBase.replace(/^http/, 'ws');
-    return `${wsBase}/stream/ws`;
-  }
   if (typeof window !== 'undefined') {
     const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.host;
     const wsHost = host.includes(':5173') ? 'localhost:8000' : host;
     return `${proto}//${wsHost}/api/v1/stream/ws`;
+  }
+  const apiBase = getApiBaseUrl();
+  if (apiBase.startsWith('http://') || apiBase.startsWith('https://')) {
+    const wsBase = apiBase.replace(/^http/, 'ws');
+    return `${wsBase}/stream/ws`;
   }
   return 'ws://localhost:8000/api/v1/stream/ws';
 }
@@ -73,7 +73,12 @@ export async function stepReplaySession(sessionId: string): Promise<{ session_id
   return res.json();
 }
 
-export async function queryAgent(query: string, currentForecast?: CyberSentinelForecast | null, sessionId?: string): Promise<{
+export async function queryAgent(
+  query: string,
+  currentForecast?: CyberSentinelForecast | null,
+  sessionId?: string,
+  history?: Array<{ role: string; content: string }>
+): Promise<{
   answer: string;
   tool_calls: string[];
   provenance: string;
@@ -86,7 +91,8 @@ export async function queryAgent(query: string, currentForecast?: CyberSentinelF
     body: JSON.stringify({
       query,
       current_forecast: currentForecast || undefined,
-      session_id: sessionId || undefined
+      session_id: sessionId || undefined,
+      history: history && history.length > 0 ? history : undefined
     })
   });
   if (!res.ok) throw new Error(`Agent query failed: ${res.status}`);

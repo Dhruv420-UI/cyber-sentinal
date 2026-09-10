@@ -1,14 +1,14 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Bot, Send, Sparkles, Terminal, ShieldCheck } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { queryAgent } from '../../services/api';
 
-const QUICK_QUERIES = [
-  'What should I prioritize?',
-  'Why is this a threat?',
-  'What evidence supports this?',
-  'What MITRE techniques?',
-  'Summarize incident'
+const STARTER_QUESTIONS = [
+  "What's happening right now?",
+  "Why is this considered risky?",
+  "What is likely to happen next?",
+  "What should I investigate first?",
+  "Explain this incident in simple terms."
 ];
 
 export const AnalystView: React.FC = () => {
@@ -25,7 +25,12 @@ export const AnalystView: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const resp = await queryAgent(query, lastForecast);
+      const history = chatMessages.slice(-6).map((m) => ({
+        role: m.role,
+        content: m.content
+      }));
+
+      const resp = await queryAgent(query, lastForecast, undefined, history);
       addChatMessage({
         role: 'agent',
         content: resp.answer,
@@ -35,7 +40,7 @@ export const AnalystView: React.FC = () => {
     } catch (e: any) {
       addChatMessage({
         role: 'agent',
-        content: `Error communicating with Defensive Agent: ${e.message}. System is operating in fail-closed deterministic mode.`,
+        content: `### [OBSERVED]\nCommunication with Defensive Agent interrupted: ${e.message}.\n\n### [FORECAST]\nOperating in fail-closed deterministic mode.\n\n### [RECOMMENDATION]\nCheck backend health and API connectivity.`,
         backend: 'fallback'
       });
     } finally {
@@ -74,41 +79,73 @@ export const AnalystView: React.FC = () => {
       <div className="flex-1 bg-[#090d16] border border-[#1a2333] rounded-xl flex flex-col overflow-hidden shadow-xl min-h-0">
         {/* Messages History */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3">
-          {chatMessages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`rounded-xl p-3 sm:p-4 text-xs sm:text-sm leading-relaxed ${
-                msg.role === 'analyst'
-                  ? 'bg-[#151e30] border border-[#22304d] text-slate-100 ml-4 sm:ml-12'
-                  : 'bg-[#0d1424] border border-[#1a2333] text-slate-200 mr-2 sm:mr-8'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1.5 text-[10px] sm:text-xs font-mono gap-1">
-                <span className={msg.role === 'analyst' ? 'text-blue-400 font-bold' : 'text-slate-400 font-bold'}>
-                  {msg.role === 'analyst' ? 'SOC ANALYST' : 'CYBERSENTINEL DEFENSE'}
-                </span>
-                {msg.backend && (
-                  <span className="text-slate-500 text-[10px] flex items-center gap-1 shrink-0">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                    {msg.backend.replace('ollama:', '')}
+          {chatMessages.length === 0 ? (
+            <div className="max-w-2xl mx-auto my-auto py-8 text-center space-y-5">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400 mb-1">
+                <Bot className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-100">
+                  CyberSentinel Neural SOC Copilot
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto mt-1">
+                  Direct reasoning engine grounded in live physical telemetry, CyberWorldModelV2 transition predictions, and MITRE ATT&CK techniques.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-left pt-2">
+                {STARTER_QUESTIONS.map((q, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSend(q)}
+                    disabled={isLoading}
+                    className={`p-3 rounded-xl bg-[#101726] hover:bg-blue-600/15 hover:border-blue-500/40 border border-[#1a2333] text-slate-200 text-xs sm:text-sm transition-all flex items-center justify-between group disabled:opacity-50 ${
+                      idx === 4 ? 'sm:col-span-2' : ''
+                    }`}
+                  >
+                    <span className="group-hover:text-blue-300 transition-colors font-medium">{q}</span>
+                    <Send className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 shrink-0 ml-2 transition-colors" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            chatMessages.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`rounded-xl p-3 sm:p-4 text-xs sm:text-sm leading-relaxed ${
+                  msg.role === 'analyst'
+                    ? 'bg-[#151e30] border border-[#22304d] text-slate-100 ml-4 sm:ml-12'
+                    : 'bg-[#0d1424] border border-[#1a2333] text-slate-200 mr-2 sm:mr-8'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1.5 text-[10px] sm:text-xs font-mono gap-1">
+                  <span className={msg.role === 'analyst' ? 'text-blue-400 font-bold' : 'text-slate-400 font-bold'}>
+                    {msg.role === 'analyst' ? 'SOC ANALYST' : 'CYBERSENTINEL DEFENSE'}
                   </span>
+                  {msg.backend && (
+                    <span className="text-slate-500 text-[10px] flex items-center gap-1 shrink-0">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      {msg.backend.replace('ollama:', '')}
+                    </span>
+                  )}
+                </div>
+                <div className="whitespace-pre-wrap font-sans break-words">{msg.content}</div>
+
+                {msg.tools && msg.tools.length > 0 && (
+                  <div className="mt-2.5 pt-2 border-t border-slate-800/80 text-[10px] font-mono text-slate-400 flex flex-wrap gap-1.5 items-center">
+                    <Terminal className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                    <span className="text-slate-500">Evidence queries:</span>
+                    {msg.tools.map((t, i) => (
+                      <span key={i} className="bg-[#121a2d] px-1.5 py-0.5 rounded border border-slate-700/50 text-blue-300">
+                        {t.replace('route_classifier:', '')}
+                      </span>
+                    ))}
+                  </div>
                 )}
               </div>
-              <div className="whitespace-pre-wrap font-sans break-words">{msg.content}</div>
-
-              {msg.tools && msg.tools.length > 0 && (
-                <div className="mt-2.5 pt-2 border-t border-slate-800/80 text-[10px] font-mono text-slate-400 flex flex-wrap gap-1.5 items-center">
-                  <Terminal className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                  <span className="text-slate-500">Evidence queries:</span>
-                  {msg.tools.map((t, i) => (
-                    <span key={i} className="bg-[#121a2d] px-1.5 py-0.5 rounded border border-slate-700/50 text-blue-300">
-                      {t.replace('route_classifier:', '')}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+            ))
+          )}
           {isLoading && (
             <div className="bg-[#0d1424] border border-[#1a2333] text-slate-400 rounded-xl p-3 sm:p-4 text-xs flex items-center gap-2 font-mono animate-pulse">
               <Sparkles className="w-4 h-4 text-blue-400 animate-spin shrink-0" />
@@ -123,7 +160,7 @@ export const AnalystView: React.FC = () => {
             Quick Inquiries
           </div>
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
-            {QUICK_QUERIES.map((q, idx) => (
+            {STARTER_QUESTIONS.map((q, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSend(q)}

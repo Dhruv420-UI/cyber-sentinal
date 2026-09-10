@@ -101,13 +101,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }
   },
 
-  chatMessages: [
-    {
-      role: 'agent',
-      content: 'CyberSentinel Analyst online. Grounded strictly in real-time neural world model outputs. Select a quick query or ask an investigation question.',
-      backend: 'deterministic_engine'
-    }
-  ],
+  chatMessages: [],
   addChatMessage: (msg) => set((state) => ({ chatMessages: [...state.chatMessages, msg] })),
 
   initWebSocket: () => {

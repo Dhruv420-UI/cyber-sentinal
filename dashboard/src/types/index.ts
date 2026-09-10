@@ -78,6 +78,7 @@ export interface CyberSentinelForecast {
   ground_truth_stage?: AttackStage;
   ground_truth_next_stage?: AttackStage;
   telemetry_features?: Record<string, number>;
+  inference_latency_ms?: number;
 }
 
 export interface StreamEvent {

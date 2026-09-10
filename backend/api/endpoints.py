@@ -55,9 +55,11 @@ def health(request: Request):
     svc = _get_svc(request)
     agent = _get_agent(request)
     ollama_ok = False
+    gemini_ok = False
     if agent is not None:
         agent._ensure_ollama_checked()
         ollama_ok = bool(agent._ollama_available)
+        gemini_ok = bool(agent.gemini_available)
 
     from pathlib import Path
     dataset_ok = (Path(__file__).resolve().parent.parent.parent / "datasets" / "sample").exists()
@@ -69,6 +71,7 @@ def health(request: Request):
         calibration_loaded=svc.calibration_loaded,
         dataset_available=dataset_ok,
         ollama_available=ollama_ok,
+        gemini_available=gemini_ok,
         timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     )
 
@@ -189,19 +192,34 @@ def risk(body: ForecastRequest, request: Request):
 @router.post("/agent/query", response_model=AgentQueryResponse)
 def agent_query(body: AgentQueryRequest, request: Request):
     agent = _get_agent(request)
+    live_svc = getattr(request.app.state, "live_ingest_service", None)
+    live_event = None
+    if live_svc is not None and hasattr(live_svc, "_event_log") and len(live_svc._event_log) > 0:
+        try:
+            live_event = live_svc._event_log[-1]
+        except Exception:
+            live_event = None
+
+    forecast_data = body.current_forecast
+    if not forecast_data and live_event:
+        forecast_data = live_event
+
     try:
         result = agent.answer(
             query=body.query,
-            current_forecast=body.current_forecast,
+            current_forecast=forecast_data,
             session_id=body.session_id,
+            history=body.history,
+            live_event=live_event,
         )
         return AgentQueryResponse(**result)
     except Exception as exc:
         logger.error("/agent/query error: %s", exc, exc_info=True)
-        # Graceful degradation — return template answer even on error
+        # Graceful degradation — return structured answer even on error
         return AgentQueryResponse(
-            answer=f"I encountered an error processing your query. "
-                   f"Please check the /health endpoint for system status.",
+            answer=f"### [OBSERVED]\nEncountered an operational error processing your query: {exc}.\n\n"
+                   f"### [FORECAST]\nSystem is operating in fail-closed deterministic mode.\n\n"
+                   f"### [RECOMMENDATION]\nPlease verify system health at /api/v1/health.",
             tool_calls=[],
             provenance="error_fallback",
             llm_backend="error_fallback",

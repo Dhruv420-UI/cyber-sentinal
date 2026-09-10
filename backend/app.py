@@ -24,6 +24,14 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
+try:
+    import dotenv
+    dotenv.load_dotenv(_ROOT / ".env")
+    dotenv.load_dotenv(_ROOT / "backend" / ".env")
+    dotenv.load_dotenv()
+except Exception:
+    pass
+
 from backend.api.endpoints import router
 from backend.api.stream_endpoints import stream_router
 from backend.services.model_service import ModelService

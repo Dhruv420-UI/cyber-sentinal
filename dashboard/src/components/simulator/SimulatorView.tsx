@@ -18,6 +18,7 @@ export const SimulatorView: React.FC = () => {
   const handleTransmit = async () => {
     setIsTransmitting(true);
     try {
+      useAppStore.getState().initWebSocket();
       const profile = SIMULATOR_PROFILES.find((p) => p.id === selectedProfile);
       if (!profile) {
         console.error('Selected profile not found');
@@ -111,7 +112,7 @@ export const SimulatorView: React.FC = () => {
       </div>
 
       {/* KPI Feedback */}
-      {lastForecast && (
+      {(lastForecast || lastEvent) && (
         <div className="bg-[#0b101c] border border-emerald-500/30 rounded-xl p-4 sm:p-5 space-y-3">
           <div className="text-xs font-mono font-bold text-emerald-400 flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4" /> Live Inference Feedback Received from CyberWorldModelV2
@@ -119,19 +120,19 @@ export const SimulatorView: React.FC = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
             <div className="bg-[#0d1424] p-2.5 rounded border border-slate-800">
               <span className="text-slate-500 text-[10px]">Inferred Stage</span>
-              <div className="text-slate-100 font-bold mt-1">{lastForecast.current_stage || '?'}</div>
+              <div className="text-slate-100 font-bold mt-1">{lastForecast?.current_stage || lastEvent?.current_stage || '?'}</div>
             </div>
             <div className="bg-[#0d1424] p-2.5 rounded border border-slate-800">
               <span className="text-slate-500 text-[10px]">Forecast Next</span>
-              <div className="text-blue-400 font-bold mt-1">{lastForecast.predicted_next_stage || '?'}</div>
+              <div className="text-blue-400 font-bold mt-1">{lastForecast?.predicted_next_stage || lastEvent?.predicted_next_stage || '?'}</div>
             </div>
             <div className="bg-[#0d1424] p-2.5 rounded border border-slate-800">
               <span className="text-slate-500 text-[10px]">Risk Score</span>
-              <div className="text-red-400 font-bold mt-1">{lastForecast.risk_score?.toFixed(0) || '0'}/100</div>
+              <div className="text-red-400 font-bold mt-1">{(lastForecast?.risk_score ?? lastEvent?.risk_score)?.toFixed(0) || '0'}/100</div>
             </div>
             <div className="bg-[#0d1424] p-2.5 rounded border border-slate-800">
               <span className="text-slate-500 text-[10px]">Inference Latency</span>
-              <div className="text-emerald-400 font-bold mt-1">{lastEvent?.inference_latency_ms?.toFixed(1) || '?'} ms</div>
+              <div className="text-emerald-400 font-bold mt-1">{(lastEvent?.inference_latency_ms ?? lastForecast?.inference_latency_ms)?.toFixed(1) || '?'} ms</div>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-annotated-doc==0.0.5
+﻿annotated-doc==0.0.5
 annotated-types==0.8.0
 anyio==4.15.1
 click==8.5.0
@@ -6,6 +6,7 @@ cloudpickle==3.1.2
 fastapi==0.141.1
 filelock==3.32.6
 fsspec==2026.7.0
+google-genai==2.22.0
 h11==0.16.0
 httptools==0.8.0
 idna==3.19
@@ -35,4 +36,4 @@ typing_extensions==4.16.0
 tzdata==2026.3
 uvicorn==0.52.4
 watchfiles==1.2.0
-websockets==17.1
+websockets==16.1.1

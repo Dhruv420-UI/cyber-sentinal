@@ -175,6 +175,10 @@ class AgentQueryRequest(BaseModel):
         default=None,
         description="Last CyberSentinelForecast dict for context"
     )
+    history: Optional[List[Dict[str, str]]] = Field(
+        default=None,
+        description="Prior conversation history [{'role': 'analyst'|'agent', 'content': '...'}]"
+    )
 
 
 class AgentQueryResponse(BaseModel):
@@ -235,4 +239,5 @@ class HealthResponse(BaseModel):
     calibration_loaded: bool
     dataset_available: bool
     ollama_available: bool
+    gemini_available: bool = False
     timestamp: str
