@@ -92,10 +92,58 @@ class SecurityManager:
 security_manager = SecurityManager()
 
 
+# Publicly accessible routes for frontend application flow, telemetry, and docs
+PUBLIC_EXACT_PATHS: Set[str] = {
+    "/",
+    "/docs",
+    "/openapi.json",
+    "/redoc",
+    # System health & public model metadata
+    "/api/v1/health",
+    "/api/v1/model/info",
+    # Streaming & live ingestion (telemetry, simulator, WebSocket, SSE)
+    "/api/v1/stream/health",
+    "/api/v1/stream/status",
+    "/api/v1/stream/history",
+    "/api/v1/stream/start",
+    "/api/v1/stream/stop",
+    "/api/v1/stream/ingest",
+    "/api/v1/stream/events",
+    "/api/v1/stream/ws",
+    # Replay session control
+    "/api/v1/replay/scenarios",
+    "/api/v1/replay/start",
+    "/api/v1/replay/step",
+    "/api/v1/replay/status",
+    # Interactive defensive agent query
+    "/api/v1/agent/query",
+}
+
+PUBLIC_PREFIXES: tuple[str, ...] = (
+    "/ui",
+)
+
+
+def is_public_path(path: str, method: str) -> bool:
+    """Returns True if the route is safe for unauthenticated public frontend access."""
+    if method == "OPTIONS":
+        return True
+    clean_path = path.rstrip("/") if len(path) > 1 else path
+    if clean_path in PUBLIC_EXACT_PATHS:
+        return True
+    if any(path.startswith(prefix) for prefix in PUBLIC_PREFIXES):
+        return True
+    return False
+
+
 class SecurityMiddleware(BaseHTTPMiddleware):
     """Starlette middleware enforcing rate limiting, size bounding, and auth."""
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
+        # Allow CORS preflight requests through without authentication
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
         client_ip = request.client.host if request.client else "unknown"
 
         # 1. Check Content-Length size bound
@@ -110,11 +158,9 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             except ValueError:
                 pass
 
-        # 2. Check API Key if auth enabled (skip static UI and docs)
+        # 2. Check API Key if auth enabled on sensitive/non-public routes
         path = request.url.path
-        if security_manager.is_auth_enabled and not (
-            path.startswith("/ui") or path in ("/docs", "/openapi.json", "/redoc", "/")
-        ):
+        if security_manager.is_auth_enabled and not is_public_path(path, request.method):
             api_key = request.headers.get("X-API-Key")
             if not security_manager.verify_api_key(api_key):
                 return JSONResponse(
@@ -140,3 +186,4 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         response.headers["X-XSS-Protection"] = "1; mode=block"
 
         return response
+
