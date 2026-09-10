@@ -1,6 +1,11 @@
 import type { CyberSentinelForecast, SystemHealth, ReplayStatus } from '../types';
 
 export function getApiBaseUrl(): string {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
+    const trimmed = envUrl.trim().replace(/\/+$/, '');
+    return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
+  }
   if (typeof window !== 'undefined') {
     return `${window.location.origin}/api/v1`;
   }
@@ -8,6 +13,15 @@ export function getApiBaseUrl(): string {
 }
 
 export function getWsStreamUrl(): string {
+  const envWs = import.meta.env.VITE_WS_STREAM_URL;
+  if (envWs && typeof envWs === 'string' && envWs.trim()) {
+    return envWs.trim().replace(/\/+$/, '');
+  }
+  const apiBase = getApiBaseUrl();
+  if (apiBase.startsWith('http://') || apiBase.startsWith('https://')) {
+    const wsBase = apiBase.replace(/^http/, 'ws');
+    return `${wsBase}/stream/ws`;
+  }
   if (typeof window !== 'undefined') {
     const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.host;
