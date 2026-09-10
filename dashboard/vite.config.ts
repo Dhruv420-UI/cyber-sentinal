@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
-  base: '/ui/',
+  base: '/',
   server: {
     port: 5173,
     proxy: {
